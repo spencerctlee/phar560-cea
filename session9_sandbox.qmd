@@ -1,0 +1,76 @@
+---
+title: "PHAR560/PHAR549 - COPD Markov Model (using baseR and tidy)"
+author: "Spencer Lee"
+date: "03/14/2024"
+format:
+  html:
+    code-fold: false
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Importing dependencies: meta package, here, and dpylr
+```{r}
+library(tidyr)
+library(here)
+```
+
+# Source of helper functions for later.
+```{r}
+# source(here("ma_fx.R"))
+```
+
+# Reading data (as needed)
+```{r}
+# read.csv(here("",""))
+```
+
+
+# Model set up
+## Transition matrix
+```{r}
+
+tm <- c(0.956780423, 0, 0, 0, 
+        0.01863287, 0.961489765,0,0,
+        0, 0.014035211, 0.964206028,0,
+        0.024586706, 0.024475024, 0.035793972, 1)
+
+dim(tm) <- c(4,4) # dimensionises the tm series (4x4 matrix)
+rowSums(tm) # sanity check, should add up to 1
+```
+
+## Time Hozizon
+```{r}
+time_horizon <- 10 # set time horizon to n years.
+```
+
+## Transition states
+```{r}
+states <- matrix(NA, nrow = time_horizon+1, 4)
+
+states[1,] <- c(0.5,0.3,0.2,0) # accessing first row with states[y,x], is baseline distribution by severity groups (input parameter)
+
+```
+
+
+## Health state utilities and costs
+```{r}
+cost <- c(1383, 1896, 9752, 0)
+util <- c(0.8, 0.72, 0.67, 0)
+exac <- c(0.6, 0.76, 1.75, 0)
+```
+
+
+## Running the model
+```{r}
+RC <- RU <- RE <- 0 # assigning this value to all. For running costs, util, exac
+
+# This fills out the transition matrix
+for (cycle in 2:(time_horizon+1))
+  {
+  states[cycle,] <- states[cycle-1,] %*% tm 
+  RC <- RC + states[cycle,] %*% cost
+}
+
+```

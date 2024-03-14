@@ -3,6 +3,8 @@
 
 This repository contains the working codebase for  *UBC PHAR560/SPPH549 Advanced Economic Evaluation*.
 
+Helpful resources: https://cran.r-project.org/web/packages/heemod/vignettes/a_introduction.html
+
 ## Model Summary
 
 *Target Population:*
